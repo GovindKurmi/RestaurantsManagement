@@ -7,11 +7,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Controller
 public class AdminController {
 
     private List<Category> categories = new ArrayList<>();
+    private AtomicInteger id = new AtomicInteger(1);
 
     @GetMapping("/adminHome")
     public String adminHome() {
@@ -20,15 +23,14 @@ public class AdminController {
 
     @GetMapping("/admin/categories")
     public String getCategory(Model model) {
-        List<Category> category = List.of(new Category(1, "Fast Food", "Fast Food"));
+        List<Category> category = List.of(new Category(1l, "Fast Food", "Fast Food"));
         model.addAttribute("categories", categories);
         return "categories";
     }
 
     @GetMapping("/admin/categories/add")
     public String getProducts(Model model) {
-        Category category = new Category(1, "Fast Food", "Fast Food");
-        model.addAttribute("category", category);
+        model.addAttribute("category", new Category());
         return "categoriesAdd";
     }
 
@@ -41,8 +43,8 @@ public class AdminController {
     }
 
     @GetMapping("/admin/categories/delete/{id}")
-    public String deleteCategories(@PathVariable Integer id) {
-        categories.stream().filter(c -> c.getId() == id).findFirst()
+    public String deleteCategories(@PathVariable Long id) {
+        categories.stream().filter(c -> Objects.equals(c.getId(), id)).findFirst()
                 .ifPresent(category -> categories.remove(category));
         return "redirect:/admin/categories";
     }

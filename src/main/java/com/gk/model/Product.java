@@ -4,20 +4,24 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.FieldDefaults;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@FieldDefaults(level = lombok.AccessLevel.PRIVATE)
 @Entity
-@Table(name = "category")
-public class Category {
-
+@Table(name = "product")
+public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
     private String name;
     private String description;
+    private double price;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
+    private String imageName;
+    private int weight;
 }
