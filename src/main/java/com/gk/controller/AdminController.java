@@ -1,6 +1,8 @@
 package com.gk.controller;
 
 import com.gk.model.Category;
+import com.gk.service.CategoryService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -11,10 +13,10 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Controller
+@RequiredArgsConstructor
 public class AdminController {
 
-    private List<Category> categories = new ArrayList<>();
-    private AtomicInteger id = new AtomicInteger(1);
+    private final CategoryService categoryService;
 
     @GetMapping("/adminHome")
     public String adminHome() {
@@ -23,8 +25,7 @@ public class AdminController {
 
     @GetMapping("/admin/categories")
     public String getCategory(Model model) {
-        List<Category> category = List.of(new Category(1l, "Fast Food", "Fast Food"));
-        model.addAttribute("categories", categories);
+        model.addAttribute("categories", categoryService.getAllCategory());
         return "categories";
     }
 
@@ -36,21 +37,20 @@ public class AdminController {
 
     @PostMapping("/admin/categories/add")
     public String addCategory(@ModelAttribute("category") Category category) {
-        //save data
-        categories.add(category);
+        categoryService.addCategories(category);
         System.out.println(category);
         return "redirect:/admin/categories";
     }
 
     @GetMapping("/admin/categories/delete/{id}")
     public String deleteCategories(@PathVariable Long id) {
-        categories.stream().filter(c -> Objects.equals(c.getId(), id)).findFirst()
-                .ifPresent(category -> categories.remove(category));
+        categoryService.deleteById(id);
         return "redirect:/admin/categories";
     }
 
     @GetMapping("/admin/categories/update/{id}")
     public String updateCategories(@PathVariable Integer id) {
+        categoryService.updateCategories(id);
         return "redirect:/admin/categories/add";
     }
 

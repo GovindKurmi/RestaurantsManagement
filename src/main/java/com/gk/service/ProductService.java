@@ -2,10 +2,16 @@ package com.gk.service;
 
 import com.gk.model.Category;
 import com.gk.model.Product;
+import com.gk.model.ProductDto;
 import com.gk.repo.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @Service
@@ -15,8 +21,29 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
 
-    public void addProduct(Product product) {
+    public void addProduct(ProductDto productDto, MultipartFile file, String imgName) throws IOException {
+        Product product = new Product();
+        Category categoryById = findCategoryById(productDto.getCategory().getId());
+        product.setId(productDto.getId());
+        product.setName(productDto.getName());
+        product.setDescription(productDto.getDescription());
+        product.setPrice(productDto.getPrice());
+        product.setCategory(categoryById);
+        product.setWeight(productDto.getWeight());
+        String originalFilename = "";
+        if (!file.isEmpty()) {
+            originalFilename = file.getOriginalFilename();
+            Path path = Paths.get("src\\main\\resources\\static\\images\\" + originalFilename);
+            Files.write(path, file.getBytes());
+        } else {
+            originalFilename = imgName;
+        }
+        product.setImageName(originalFilename);
         productRepository.save(product);
+    }
+
+    private Category findCategoryById(Long id) {
+        return categoryService.findById(id).orElse(new Category(1l, null, null));
     }
 
     public List<Product> getAllProduct() {
