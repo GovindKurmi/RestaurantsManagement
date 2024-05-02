@@ -53,4 +53,23 @@ public class ProductService {
     public List<Category> getAllCategory() {
         return categoryService.getAllCategory();
     }
+
+    public void deleteProduct(Long id) {
+        productRepository.deleteById(id);
+    }
+
+    public void updateProducts(ProductDto productDto) {
+        Product product = new Product();
+        product.setId(productDto.getId());
+        product.setName(productDto.getName());
+        product.setDescription(productDto.getDescription());
+        product.setPrice(productDto.getPrice());
+        product.setWeight(productDto.getWeight());
+        product.setCategory(findCategoryById(productDto.getCategory().getId()));
+        productRepository.save(product);
+    }
+
+    public Product findProductById(Long id) {
+        return productRepository.findById(id).orElse(null);
+    }
 }

@@ -41,8 +41,15 @@ public class ProductController {
         return "redirect:/product/getProducts";
     }
 
-    @GetMapping("/products/delete/{id}")
-    public String getProductsDelete() {
-        return "productsDelete";
+    @GetMapping("/delete/{id}")
+    public String getProductsDelete(@PathVariable Long id) {
+        productService.deleteProduct(id);
+        return "products";
+    }
+
+    @PostMapping("/update/{id}")
+    public String updateProducts(@ModelAttribute("productDTO") ProductDto productDto, @PathVariable Long id) {
+        productService.updateProducts(productDto);
+        return "products";
     }
 }
