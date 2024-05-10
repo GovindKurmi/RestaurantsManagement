@@ -45,7 +45,7 @@
     <div class="col-sm-6">
         <h3 style="margin-top: 10px">Sign Up Now</h3>
         <p>Please fill out this to register</p>
-        <form th:action="@{/register}" th:object="${user}" method="post">
+        <form th:action="@{/registration}" th:object="${user}" method="post">
             <div class="form-group">
                 <label for="firstName">First Name</label>
                 <input type="text" name="firstName" id="firstName" required placeholder="Your Firstname" class="form-control form-control-lg">
@@ -67,10 +67,10 @@
                        id="password">
             </div>
 
-            <input type="submit" value="Register" class="btn btn-primary btn-block">
-            <span style="margin-top: 10px">Already have an account <a class="linkControl" href="./login.html"
-                                                                      th:href="@{/login}">Login here</a></span>
+            <input type="submit" value="Register" class="btn btn-primary btn-block"/>
         </form>
+        <span style="margin-top: 10px">Already have an account <a class="linkControl" href="./login.html"
+                                                                  th:href="@{/login}">Login here</a></span>
     </div>
 </div>
 
