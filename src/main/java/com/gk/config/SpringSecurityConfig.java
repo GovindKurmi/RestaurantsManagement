@@ -18,11 +18,11 @@ public class SpringSecurityConfig {
         return http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers("/",
-                                        "/register","registration", "/images/**", "/css/**", "/js/**", "/fonts/**"
+                                        "/auth/**", "/images/**", "/css/**", "/js/**", "/fonts/**"
                                 ).permitAll()
                                 .requestMatchers("/admin/**").hasRole("ADMIN")
                                 .anyRequest().authenticated())
-                .formLogin(form -> form.loginPage("/login")
+                .formLogin(form -> form.loginPage("/auth/login")
                         .loginProcessingUrl("/login")
                         .usernameParameter("email")
                         .defaultSuccessUrl("/", true).permitAll())
