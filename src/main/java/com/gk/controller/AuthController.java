@@ -1,5 +1,6 @@
 package com.gk.controller;
 
+import com.gk.common.GlobalData;
 import com.gk.model.User;
 import com.gk.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ private final AuthService authService;
 
     @GetMapping("/login")
     public String login() {
+        GlobalData.cart.clear();
         return "login";
     }
 

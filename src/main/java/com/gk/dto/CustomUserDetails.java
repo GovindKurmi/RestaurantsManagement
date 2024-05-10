@@ -1,4 +1,4 @@
-package com.gk.service;
+package com.gk.dto;
 
 import com.gk.model.User;
 import lombok.AllArgsConstructor;

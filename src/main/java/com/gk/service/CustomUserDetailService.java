@@ -1,5 +1,6 @@
 package com.gk.service;
 
+import com.gk.dto.CustomUserDetails;
 import com.gk.model.User;
 import com.gk.repo.UserRepository;
 import lombok.RequiredArgsConstructor;
