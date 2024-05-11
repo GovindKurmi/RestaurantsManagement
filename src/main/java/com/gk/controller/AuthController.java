@@ -3,6 +3,7 @@ package com.gk.controller;
 import com.gk.common.GlobalData;
 import com.gk.model.User;
 import com.gk.service.AuthService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,7 +30,7 @@ private final AuthService authService;
     }
 
     @PostMapping("/registration")
-    public String registration(@ModelAttribute("user") User user) {
+    public String registration(@Valid @ModelAttribute("user") User user) {
         authService.registration(user);
         return "login";
     }
