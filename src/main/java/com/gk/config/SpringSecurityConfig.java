@@ -20,12 +20,13 @@ public class SpringSecurityConfig {
                         auth.requestMatchers("/",
                                         "/auth/**", "/images/**", "/css/**", "/js/**", "/fonts/**"
                                 ).permitAll()
-                                .requestMatchers("/admin/**").hasRole("ADMIN")
+                                .requestMatchers("/category/**", "/product/**","/admin/**").hasRole("ADMIN")
                                 .anyRequest().authenticated())
                 .formLogin(form -> form.loginPage("/auth/login")
                         .loginProcessingUrl("/login")
                         .usernameParameter("email")
-                        .defaultSuccessUrl("/", true).permitAll())
+                        .successHandler(new MyCustomSuccessHandler())
+                        .permitAll())
                 .build();
     }
 

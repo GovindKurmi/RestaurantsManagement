@@ -72,4 +72,8 @@ public class ProductService {
     public Product findProductById(Long id) {
         return productRepository.findById(id).orElse(null);
     }
+
+    public List<Product> findProductByCategory(Category category) {
+       return getAllProduct().stream().filter(p->p.getCategory().getId().equals(category.getId())).toList();
+    }
 }

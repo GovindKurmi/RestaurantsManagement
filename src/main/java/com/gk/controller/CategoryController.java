@@ -2,6 +2,7 @@ package com.gk.controller;
 
 import com.gk.model.Category;
 import com.gk.service.CategoryService;
+import com.gk.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class CategoryController {
     private final CategoryService categoryService;
+    private final ProductService productService;
 
     @GetMapping("/fetchAll")
     public String getAllCategory(Model model) {
