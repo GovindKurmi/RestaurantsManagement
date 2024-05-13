@@ -1,26 +1,32 @@
 package com.gk.controller;
 
 import com.gk.common.GlobalData;
+import com.gk.dto.PaymentDetails;
 import com.gk.model.Category;
 import com.gk.model.Product;
 import com.gk.service.CategoryService;
+import com.gk.service.PaypalService;
 import com.gk.service.ProductService;
+import com.paypal.api.payments.Links;
+import com.paypal.api.payments.Payment;
+import com.paypal.base.rest.PayPalRESTException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 public class HomeController {
 
     private final ProductService productService;
     private final CategoryService categoryService;
+    private final PaypalService payPalService;
 
     @GetMapping({"/", "/home"})
     public String home(Model model) {
@@ -53,16 +59,55 @@ public class HomeController {
         return "shop";
     }
 
-    @GetMapping("/order/placed")
-    public String viewCartDetails(Model model) {
-        Map<String, String> receipt = new HashMap<>();
-        receipt.put("total", String.valueOf(GlobalData.cart.stream().mapToDouble(Product::getPrice).sum()));
-        receipt.put("items", String.valueOf(GlobalData.cart.size()));
-        receipt.put("discount", "10%");
-        receipt.put("tax", "10%");
-        receipt.put("delivery", "10%");
+    @GetMapping("cart/checkout")
+    public String checkout(Model model) {
+        model.addAttribute("payment", new PaymentDetails());
+        model.addAttribute("total", GlobalData.cart.stream().mapToDouble(Product::getPrice).sum());
+        return "checkout";
+    }
 
-        model.addAttribute("parameters", receipt);
+    @PostMapping("/payNow")
+    public RedirectView payNow(@ModelAttribute("payment") PaymentDetails paymentDetails, Model model) throws PayPalRESTException {
+        double totalAmount = GlobalData.cart.stream().mapToDouble(Product::getPrice).sum();
+        log.info("{}", paymentDetails);
+        paymentDetails.setTotal(totalAmount);
+        try {
+            String cancelUrl = "http://localhost:8093/payment/cancel";
+            String successUrl = "http://localhost:8093/order/placed";
+            Payment payments = payPalService.createPayment(paymentDetails, cancelUrl, successUrl);
+            for (Links links : payments.getLinks()) {
+                if (links.getRel().equals("approval_url")) {
+                    payPalService.transactionDetails(paymentDetails);
+                    payPalService.billingAddress(paymentDetails);
+                    return new RedirectView(links.getHref());
+                }
+            }
+        } catch (PayPalRESTException e) {
+            log.error("Error occurred:: ", e);
+        }
+        return new RedirectView("/payment/error");
+    }
+
+    @GetMapping("payment/cancel")
+    public String PaymentCancel() {
+        return "cancelPage";
+    }
+
+    @GetMapping("/payment/error")
+    public String PaymentError() {
+        return "paymentFailed";
+    }
+
+    @GetMapping("/order/placed")
+    public String paymentSuccess(@RequestParam("paymentId") String paymentId, @RequestParam("PayerID") String payerId) {
+        try {
+            Payment payment = payPalService.executePayment(paymentId, payerId);
+            if (payment.getState().equals("approved")) {
+                return "orderPlaced";
+            }
+        } catch (PayPalRESTException e) {
+            log.error("Error occurred:: ", e);
+        }
         return "orderPlaced";
     }
 

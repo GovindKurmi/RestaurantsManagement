@@ -23,17 +23,11 @@ public class CartController {
         return "redirect:/shop";
     }
 
-    @GetMapping("/checkout")
-    public String checkout(Model model) {
-        model.addAttribute("total",  GlobalData.cart.stream().mapToDouble(Product::getPrice).sum());
-        return "checkout";
-    }
-
     @GetMapping("/viewCartDetails")
     public String viewCartDetails(Model model) {
-        model.addAttribute("cartCount",  GlobalData.cart.size());
-        model.addAttribute("total",  GlobalData.cart.stream().mapToDouble(Product::getPrice).sum());
-        model.addAttribute("cart",  GlobalData.cart);
+        model.addAttribute("cartCount", GlobalData.cart.size());
+        model.addAttribute("total", GlobalData.cart.stream().mapToDouble(Product::getPrice).sum());
+        model.addAttribute("cart", GlobalData.cart);
         return "cart";
     }
 

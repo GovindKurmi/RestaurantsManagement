@@ -45,25 +45,28 @@
     <div class="col-sm-6">
         <h3 style="margin-top: 10px">Sign Up Now</h3>
         <p>Please fill out this to register</p>
-        <form th:action="@{/auth/registration}" th:object="${user}" method="post">
+        <form th:action="@{/auth/registration}" th:object="${user}" method="post" novalidate>
             <div class="form-group">
                 <label for="firstName">First Name</label>
                 <input type="text" name="firstName" id="firstName" required placeholder="Your Firstname" class="form-control form-control-lg">
+                <span class="text-danger form-text p-2" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></span>
             </div>
             <div class="form-group">
                 <label for="lastName">Last Name</label>
                 <input type="text" name="lastName" id="lastName" required placeholder="Your Lastname" class="form-control form-control-lg">
+                <span class="text-danger form-text p-2" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></span>
             </div>
             <div class="form-group">
                 <label for="email">Email address</label>
-                <input type="email" class="form-control form-control-lg" required minlength="6" placeholder="Email" name="email" id="email"
-                       aria-describedby="emailHelp">
-                <span></span>
+                <input type="email" class="form-control form-control-lg" required minlength="6" placeholder="Email" id="email"
+                       aria-describedby="emailHelp" th:field="*{email}">
+                <span class="text-danger form-text p-2" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
                 <input type="password" class="form-control form-control-lg" required placeholder="Password" name="password"
                        id="password">
+                <span class="text-danger form-text p-2" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
             </div>
 
             <input type="submit" value="Register" class="btn btn-primary btn-block"/>
