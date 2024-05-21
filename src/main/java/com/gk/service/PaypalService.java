@@ -26,8 +26,11 @@ public class PaypalService {
 
     public Payment createPayment(PaymentDetails paymentDetails, String cancelUrl, String successUrl) throws PayPalRESTException {
         Amount amount = new Amount();
+        //convert INR to USD Dollar below
+        double exchangeRate = 0.011975;
+        Double total = paymentDetails.getTotal() * exchangeRate;
         amount.setCurrency("USD");
-        amount.setTotal(String.format(Locale.forLanguageTag("USD"), "%.2f", paymentDetails.getTotal()));
+        amount.setTotal(String.format(Locale.forLanguageTag("USD"), "%.2f", total));
         // 9.99$ - 9,99€
         Transaction transaction = new Transaction();
         transaction.setDescription(paymentDetails.getAdditionalInfo());

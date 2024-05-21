@@ -19,6 +19,9 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.List;
 
+import static com.gk.common.Constant.CANCEL_URL;
+import static com.gk.common.Constant.SUCCESS_URL;
+
 @Controller
 @RequiredArgsConstructor
 @Slf4j
@@ -72,9 +75,7 @@ public class HomeController {
         log.info("{}", paymentDetails);
         paymentDetails.setTotal(totalAmount);
         try {
-            String cancelUrl = "http://localhost:8093/payment/cancel";
-            String successUrl = "http://localhost:8093/order/placed";
-            Payment payments = payPalService.createPayment(paymentDetails, cancelUrl, successUrl);
+            Payment payments = payPalService.createPayment(paymentDetails, CANCEL_URL, SUCCESS_URL);
             for (Links links : payments.getLinks()) {
                 if (links.getRel().equals("approval_url")) {
                     payPalService.transactionDetails(paymentDetails);
@@ -99,10 +100,14 @@ public class HomeController {
     }
 
     @GetMapping("/order/placed")
-    public String paymentSuccess(@RequestParam("paymentId") String paymentId, @RequestParam("PayerID") String payerId) {
+    public String paymentSuccess(Model model, @RequestParam("paymentId") String paymentId, @RequestParam("PayerID") String payerId) {
         try {
             Payment payment = payPalService.executePayment(paymentId, payerId);
             if (payment.getState().equals("approved")) {
+                model.addAttribute("payment", payment);
+                model.addAttribute("payer", payment.getPayer());
+                model.addAttribute("total", GlobalData.cart.stream().mapToDouble(Product::getPrice).sum());
+                model.addAttribute("cartCount", GlobalData.cart.size());
                 return "orderPlaced";
             }
         } catch (PayPalRESTException e) {

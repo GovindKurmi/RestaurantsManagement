@@ -18,31 +18,43 @@
         <div class="well col-xs-10 col-sm-10 col-md-6 col-xs-offset-1 col-sm-offset-1 col-md-offset-3">
             <div class="row">
                 <div class="col-xs-6 col-sm-6 col-md-6">
-                    <strong th:text="${result}"></strong>
+                    <strong th:text="${payment.id}"></strong>
                     <br>
                 </div>
                 <div class="col-xs-6 col-sm-6 col-md-6 text-right">
                     <p>
-                        <em>Receipt #: 34522677W</em>
+                        <em>Receipt #:<p th:text="${payment.id}"></p></em>
                     </p>
                 </div>
             </div>
             <div class="row">
-                <div class="text-center">
-                    <h1>Receipt</h1>
+                <hr>
+                <div class="container mt-4">
+                    <h1>Order Receipt</h1>
+                    <p>Order ID: <span th:text="${payment.id}"></span></p>
+                    <p>Payment Method: <span th:text="${payer.payment_method}"></span></p>
+                    <p>Payer Email: <span th:text="${payer.payer_info.email}"></span></p>
+                    <hr>
+                    <h3>Shipping Address</h3>
+                    <p>Name: <span th:text="${payer.payer_info.shipping_address.recipient_name}"></span></p>
+                    <p>Address:
+                        <span th:text="${payer.payer_info.shipping_address.line1}"></span><br>
+                        <span th:text="${payer.payer_info.shipping_address.line2}"></span><br>
+                        <span th:text="${payer.payer_info.shipping_address.city}"></span>,
+                        <span th:text="${payer.payer_info.shipping_address.state}"></span>
+                        <span th:text="${payer.payer_info.shipping_address.postal_code}"></span></p>
+                    <p>Country: <span th:text="${payer.payer_info.shipping_address.country_code}"></span></p>
+                    <hr>
+                    <h3>Order Items</h3>
+                    <p><strong>Subtotal: USD <span th:text="${transactions[0].amount.details.subtotal}"></span></strong>
+                    </p>
+                    <p>Shipping: USD <span th:text="${transactions[0].amount.details.shipping}"></span></p>
+                    <p>Handling Fee: USD <span th:text="${transactions[0].amount.details.handling_fee}"></span></p>
+                    <p><strong>Total: INR <span th:text="${total}"></span></strong></p>
+                    <hr>
+                    <p>Payment Status: <span th:text="${payment.state}"></span></p>
+                    <p>Order Date: <span th:text="${payment.create_time}"></span></p>
                 </div>
-                <table class="table table-hover">
-                    <thead>
-                    <tr>
-                        <th>Components</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="entry : ${parameters}">
-                        <td th:text="${entry.key} + '  :   ' + ${entry.value}"></td>
-                    </tr>
-                    </tbody>
-                </table>
             </div>
         </div>
     </div>
